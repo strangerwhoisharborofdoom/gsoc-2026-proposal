@@ -11,7 +11,7 @@
 
 ## 📋 Executive Summary
 
-This proposal aims to enhance the integration between Gazebo simulator and ROS 2 through improved tools, documentation, and new features. Based on 6 submitted pull requests to 4 Open Robotics repositories and 3 complete projects, this work will significantly improve the robotics development experience by providing seamless simulation capabilities for autonomous systems testing.repositories and 3 complete projects, this work will significantly improve the robotics development experience by providing seamless simulation capabilities for autonomous systems testing.repositories and 3 complete projects, this work will significantly improve the robotics development experience by providing seamless simulation capabilities for autonomous systems testing.
+This proposal aims to enhance the integration between Gazebo simulator and ROS 2 through improved tools, documentation, and new features. Based on 6 submitted pull requests to 4 Open Robotics repositories and 3 complete projects, this work will significantly improve the robotics development experience by providing seamless simulation capabilities for autonomous systems testingrepositories and 3 complete projects, this work will significantly improve the robotics development experience by providing seamless simulation capabilities for autonomous systems testing.
 
 ---
 
@@ -421,7 +421,7 @@ With a proven track record of 6 submitted PRs and 3 complete projects to Open Ro
 
 This GSoC project represents the culmination of focused learning in robotics simulation. Beyond code delivery, I'm committed to mentoring junior developers, creating educational content, and building a sustainable ecosystem that enables 1000+ developers to adopt these tools confidently.
 
-I'm excited to dedicate these 12 weeks to creating robotics simulation tools that don't just work—they inspire.deep understanding of the robotics simulation pipeline, combined with strong software engineering practices, ensures that this work will have lasting impact on the community.
+I'm excited to dedicate these 12 weeks to creating robotics simulation tools that don't just work—they inspire deep understanding of the robotics simulation pipeline, combined with strong software engineering practices, ensures that this work will have lasting impact on the community.
 
 I am excited to push the boundaries of robotics simulation tools and make them more accessible to developers worldwide.
 
