@@ -34,7 +34,7 @@ This proposal aims to enhance the integration between Gazebo simulator and ROS 2
 
 ## 📊 Current Progress & Contributions
 
-### ✅ Already Completed (Pre-GSoC Work)
+#### 📋 Pre-GSoC Contributions (In Development)
 
 #### **Pull Requests Created: 6 PRs**
 
