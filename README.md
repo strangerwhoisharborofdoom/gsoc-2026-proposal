@@ -32,6 +32,103 @@ This proposal aims to enhance the integration between Gazebo simulator and ROS 2
 
 ---
 
+## 💼 System Architecture & Workflow
+
+### Architecture Overview
+
+The proposed Gazebo-ROS 2 integration system consists of three core components:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        ROS 2 Ecosystem                          │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  ROS 2 Nodes  │  Topics  │  Services  │  Parameters    │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└────────────────────┬─────────────────────────────────────────────┘
+                     │
+                     │ (Middleware/Bridge)
+                     ▼
+┌─────────────────────────────────────────────────────────────────┐
+│               Gazebo-ROS 2 Bridge Layer                         │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  Message Conversion  │  Entity Mapping  │  Tf2 Sync     │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└────────────────────┬─────────────────────────────────────────────┘
+                     │
+                     │ (Simulation Interface)
+                     ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Gazebo Simulator                             │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  Entities  │  Physics Engine  │  Sensors  │  Rendering  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Data Flow Diagram
+
+```
+Input Data                Processing Pipeline              Output Data
+┌──────────┐             ┌─────────────┐                ┌──────────┐
+│  URDF    │─────────►   │   Parser    │───────────►    │   SDF    │
+│ Files    │             │             │                │  Files   │
+└──────────┘             └─────────────┘                └──────────┘
+                                │
+                                │ (Validation)
+                                ▼
+┌──────────────────────────────────────────────────────────────────┐
+│           Format Conversion & Validation Engine                 │
+│  ✓ Mesh Compatibility  ✓ Physics Properties  ✓ Sensor Config   │
+└──────────────────────────────────────────────────────────────────┘
+                                │
+                                │ (Bridge & Sync)
+                                ▼
+┌──────────────────────────────────────────────────────────────────┐
+│          Multi-Robot Simulation Environment                     │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐               │
+│  │ Robot 1    │  │ Robot 2    │  │ Robot N    │  ...          │
+│  │ - Sensors  │  │ - Sensors  │  │ - Sensors  │               │
+│  │ - Actuators│  │ - Actuators│  │ - Actuators│               │
+│  └────────────┘  └────────────┘  └────────────┘               │
+└──────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+                    ┌──────────────────────┐
+                    │  ROS 2 Topic Bus     │
+                    │  & TF2 Frame Tree    │
+                    └──────────────────────┘
+                                │
+                                ▼
+                    ┌──────────────────────┐
+                    │  Application Logic   │
+                    │  (User Code)         │
+                    └──────────────────────┘
+```
+
+### Module Dependency Graph
+
+```
+                    ┌─────────────────┐
+                    │   sdf-parser    │
+                    │   (New Module)  │
+                    └────────┬────────┘
+                             │
+                    ┌────────▼────────┐
+                    │ urdf-sdf-       │
+                    │ converter       │  ◄─────── ROS 2 Bridge
+                    │ (Enhanced)      │  ◄─────────  (Enhanced)
+                    └────────┬────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              ▼              ▼              ▼
+      ┌───────────────┐ ┌────────┐ ┌──────────────┐
+      │  Gazebo      │ │ Docker │ │ CI/CD Tests  │
+      │  Simulation  │ │ Images │ │ & Validation │
+      └───────────────┘ └────────┘ └──────────────┘
+```
+
+---
+
 ## 📊 Current Progress & Contributions
 
 #### 📋 Pre-GSoC Contributions (In Development)
