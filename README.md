@@ -40,12 +40,12 @@ This proposal aims to enhance the integration between Gazebo simulator and ROS 2
 
 | # | Repository | Issue | PR # | Description | Status |
 |---|------------|-------|------|-------------|--------|
-| 1 | **gz-sim** | #3363 | #3367 | ECM Documentation - Entity Component Manager complexity | ✅ |
-| 2 | **gz-sim** | #2588 | #3368 | Blender 4.x Compatibility - Updated procedural dataset generator | ✅ |
-| 3 | **rocker** | #326 | #353 | ROCm Extension - Added AMD GPU support | ✅ |
-| 4 | **rocker** | #337 | #354 | Git Extension - Fixed /home hardcoding issue | ✅ |
-| 5 | **gz-math** | #303 | #719 | Pose3/PID/Inertial/MassMatrix3 API Documentation | ✅ |
-| 6 | **gz-physics** | #258 | #886 | Friction Parameters Tutorial - friction_parameters.md | ✅ |
+| 1 | **gz-sim** | #3363 | #3367 | ECM Documentation - Entity Component Manager complexity | 🔄 Open || 1 | **gz-sim** | #3363 | #3367 | ECM Documentation - Entity Component Manager complexity | ✅ |
+| 2 | **gz-sim** | #2588 | #3368 | Blender 4.x Compatibility - Updated procedural dataset generator | ❌ Closed |
+| 3 | **rocker** | #326 | #353 | ROCm Extension - Added AMD GPU support | 🔄 Open |
+| 4 | **rocker** | #337 | #354 | Git Extension - Fixed /home hardcoding issue | 🔄 Open |
+| 5 | **gz-math** | #303 | #719 | Pose3/PID/Inertial/MassMatrix3 API Documentation | ❌ Closed |
+| 6 | **gz-physics** | #258 | #886 | Friction Parameters Tutorial - friction_parameters.md | 🔄 Open |
 
 #### **Projects Created: 3 Complete Projects**
 
