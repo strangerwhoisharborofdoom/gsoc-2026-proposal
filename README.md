@@ -11,7 +11,7 @@
 
 ## 📋 Executive Summary
 
-This proposal aims to enhance the integration between Gazebo simulator and ROS 2 through improved tools, documentation, and new features. Building on 6+ Pull Requests across 4 Open Robotics repositories and 3 complete projects, this work will significantly improve the robotics development experience by providing seamless simulation capabilities for autonomous systems testing.
+This proposal aims to enhance the integration between Gazebo simulator and ROS 2 through improved tools, documentation, and new features. Based on 6 submitted pull requests to 4 Open Robotics repositories and 3 complete projects, this work will significantly improve the robotics development experience by providing seamless simulation capabilities for autonomous systems testing.repositories and 3 complete projects, this work will significantly improve the robotics development experience by providing seamless simulation capabilities for autonomous systems testing.
 
 ---
 
