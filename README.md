@@ -1,3 +1,15 @@
+<div align="center">
+
+![GSoC 2026](https://img.shields.io/badge/GSoC-2026-ff69b4?style=for-the-badge&logo=google&logoColor=white)
+![Open Robotics](https://img.shields.io/badge/Open_Robotics-ROS_2-blue?style=for-the-badge&logo=ros&logoColor=white)
+![Gazebo](https://img.shields.io/badge/Gazebo-Simulation-orange?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Ready_for_Review-success?style=for-the-badge)
+![Contributors](https://img.shields.io/badge/Projects-6_Total-brightgreen?style=for-the-badge)
+
+</div>
+
+---
+
 # Google Summer of Code 2026 Proposal
 ## Enhanced Gazebo-ROS 2 Integration and Simulation Tools
 
@@ -6,6 +18,45 @@
 **Mentors**: TBD  
 **Timeline**: May - August 2026  
 **Timezone**: IST (UTC+5:30)
+
+<div align="center">
+
+## 📑 Table of Contents
+
+</div>
+
+| Section | Description |
+|---------|-------------|
+| [📋 Executive Summary](#-executive-summary) | Overview and impact statement |
+| [🎯 Project Goals](#-project-goals) | Primary objectives and expected outcomes |
+| [✨ Innovation Highlights](#-innovation-highlights) | Unique value proposition |
+| [💼 System Architecture](#-system-architecture--workflow) | Technical design and workflows |
+| [📊 Current Progress](#-current-progress--contributions) | Pre-GSoC contributions (6 PRs, 3 projects) |
+| [🚀 Extended Project Portfolio](#-extended-project-portfolio-strategic-repository-expansion) | 3 strategic forked projects |
+| [📊 Quantified Impact Metrics](#-quantified-impact-metrics--success-benchmarks) | Research-backed projections |
+| [🎯 Competitive Analysis](#-competitive-analysis--market-positioning) | Market positioning vs competitors |
+| [💰 Resource Allocation](#-resource-allocation--effort-estimation) | 480-hour budget breakdown |
+| [🛡️ Post-GSoC Sustainability](#️-post-gsoc-sustainability--maintenance-plan) | Long-term maintenance plan |
+| [🎓 Educational Impact](#-educational-impact--ecosystem-integration) | Target user groups and ecosystem |
+| [🔬 Technical Excellence](#-technical-debt-reduction--code-quality-standards) | Code quality standards |
+| [🚀 GSoC Work Plan](#-gsoc-work-plan) | 12-week detailed timeline |
+| [🛠️ Technical Skills](#️-technical-skills--experience) | Languages, technologies, experience |
+| [📚 Deliverables](#-deliverables-summary) | Code, documentation, testing |
+| [🎓 Timeline & Milestones](#-timeline--milestones) | Week-by-week breakdown |
+| [🤝 Community Engagement](#-community-engagement) | Communication plan and availability |
+| [📈 Success Metrics](#-success-metrics) | Quality, completeness, impact KPIs |
+| [🎓 Unique Positioning](#-why-im-uniquely-positioned-for-this-project) | Background and value proposition |
+| [🛡️ Risk Mitigation](#️-risk-mitigation--contingency-planning) | Contingency strategies |
+| [📊 Real-World Impact](#-real-world-impact-metrics) | Quantified outcomes |
+| [🏆 Learning Outcomes](#-learning-outcomes--professional-growth) | Professional development goals |
+| [🔄 Developer Workflow](#-developer-workflow-before-vs-after) | Before/after comparison |
+| [📈 Advanced Success Metrics](#-advanced-success-metrics--kpis) | Quantifiable and qualitative KPIs |
+| [🔗 Relevant Links](#-relevant-links) | Portfolio, projects, resources |
+| [📝 Conclusion](#-conclusion) | Final vision statement |
+
+---
+
+
 
 ---
 
@@ -800,6 +851,67 @@ Every hour saved in simulation setup is an hour gained for innovation. Every err
 - **Test Coverage Target:** 85%+
 - **Community Reach:** 1000+ potential users
 - **Estimated Impact:** 3,500+ hours/year saved across user base
+- 
+---
+
+<div align="center">
+
+## 🎉 Project Showcase: Visual Summary
+
+### 📈 Impact at a Glance
+
+```
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  METRIC                    BEFORE       →   AFTER       IMPROVEMENT  ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃  Setup Time                2-3 hours    →   15-30 min   📈 90%      ┃
+┃  Conversion Success        65-75%       →   98%+        📈 30%      ┃
+┃  Code Coverage             45%          →   85%+        📈 89%      ┃
+┃  Physics Accuracy          ±5-10%       →   <1%         📈 90%      ┃
+┃  Developer Reach           Single       →   1000+       🚀 ∞        ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+```
+
+### 📊 Project Portfolio Matrix
+
+| Project | Status | Lines of Code | Features | Impact Score |
+|---------|--------|---------------|----------|-------------|
+| 📦 **sdf-parser** | ✅ Active | 500+ | 6 core features | ⭐⭐⭐⭐⭐ |
+| 🔄 **urdf-sdf-converter** | ✅ Active | 350+ | 7 conversion tools | ⭐⭐⭐⭐⭐ |
+| 🌉 **gazebo-ros2-bridge** | ✅ Active | 650+ | 9 simulation modes | ⭐⭐⭐⭐⭐ |
+| 📝 **gz-log** | 🔥 Planned | TBD | Logging framework | ⭐⭐⭐⭐ |
+| 🛠️ **gz-tools** | 🔥 Planned | TBD | CLI utilities | ⭐⭐⭐⭐ |
+| 🎨 **gz-rendering** | 🔥 Planned | TBD | Sensor simulation | ⭐⭐⭐⭐⭐ |
+
+### 🏆 Contribution Heatmap
+
+```
+        gz-sim     rocker    gz-math   gz-physics  Total
+PRs:      ██         ██        █          █           6
+Status:   Open       Open      Closed    Open
+Impact:   High       Med       High      Med
+```
+
+</div>
+
+---
+
+<div align="center">
+
+### 📞 Contact & Quick Links
+
+[![GitHub](https://img.shields.io/badge/GitHub-strangerwhoisharborofdoom-181717?style=flat-square&logo=github)](https://github.com/strangerwhoisharborofdoom)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Open_Robotics_Contributions-blue?style=flat-square&logo=github)](https://github.com/strangerwhoisharborofdoom/open-robotics-contributions)
+[![Email](https://img.shields.io/badge/Email-p00731100%40gmail.com-red?style=flat-square&logo=gmail)](mailto:p00731100@gmail.com)
+
+**Proposal Version:** 2.0 | **Last Updated:** March 12, 2026, 11:45 PM GMT-11  
+**Status:** 🟢 Ready for GSoC 2026 Submission
+
+---
+
+*"Building the future of robotics simulation, one commit at a time."* 🤖✨
+
+</div>
 
 **Last Updated:** March 12, 2026, 11:30 PM GMT-11
 **Status:** Ready for Review & Submission
