@@ -103,6 +103,28 @@ validate_sdf(sdf_xml)  # using sdformat library
 
 ---
 
+## Conversion Pipeline
+
+The conversion follows a clear 5-stage pipeline:
+
+```
+URDF file
+  ↓
+XML Parser
+  ↓
+Intermediate Robot Model
+  ↓
+SDF Generator
+  ↓
+Validation
+  ↓
+Gazebo Simulation
+```
+
+Each stage produces artifacts that feed into the next, enabling modular testing and debugging at every step.
+
+---
+
 ## Data Structures
 
 Core classes used in the converter:
@@ -149,6 +171,29 @@ graph LR
 **Flow:** URDF file is parsed into an intermediate representation (RobotModel), which is then mapped to SDF equivalents, serialized to XML, validated with sdformat, and finally tested in Gazebo simulation.
 
 
+
+---
+
+## System Architecture
+
+The URDF→SDF conversion system follows a modular architecture with clear separation of concerns:
+
+```mermaid
+graph LR
+URDF --> Parser
+Parser --> IntermediateModel
+IntermediateModel --> SDFGenerator
+SDFGenerator --> Gazebo
+Gazebo --> ROS2Bridge
+```
+
+**Components:**
+
+1. **Parser** — Extracts URDF elements using `lxml` XML parser
+2. **IntermediateModel** — Normalized in-memory representation (RobotModel class)
+3. **SDF Generator** — Serializes the model to valid SDF 1.8 XML
+4. **Gazebo** — Loads and simulates the converted model
+5. **ROS2 Bridge** — Connects simulation topics to ROS 2 nodes
 
 ---
 
@@ -251,6 +296,24 @@ Each test verifies:
 
 
 ## Real Code Examples
+
+
+## Testing Strategy
+
+The project implements a comprehensive 4-layer testing approach:
+
+1. **Unit Tests** — Individual function testing with `pytest`
+2. **Integration Tests** — Full URDF → SDF pipeline verification
+3. **Simulation Tests** — Spawn converted models in Gazebo and verify physics
+4. **Regression Tests** — Prevent breaking changes across releases
+
+**Test Pipeline:**
+
+```
+URDF → convert → SDF → spawn robot → verify joints → report
+```
+
+---
 
 ### Python API Example
 
@@ -524,6 +587,25 @@ These issues are tracked in this repo and reference the upstream Open Robotics r
 
 Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
 
+## Project Structure
+
+```
+gsoc-2026-proposal/
+├── sdf-parser/
+│   ├── parser/
+│   ├── tests/
+│   └── docs/
+├── urdf-sdf-converter/
+│   ├── converter/
+│   └── cli/
+├── examples/
+│   ├── turtlebot.urdf
+│   └── turtlebot.sdf
+└── docs/
+```
+
+---
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
@@ -738,5 +820,81 @@ I am committed to becoming a long-term contributor to the Gazebo and ROS 2 ecosy
 ## Elevator Pitch
 
 Robotics simulations depend heavily on model format compatibility between URDF (used by ROS) and SDF (used by Gazebo). However, these formats are often incompatible, causing friction in simulation workflows. This project builds a robust, well-tested conversion toolkit that enables seamless ROS 2 to Gazebo interoperability — helping developers, researchers, and companies deploy simulations faster with confidence.
+
+---
+## Exact Open Robotics Repositories
+| Repository | URL | Purpose |
+|---|---|---|
+| `gz-sim` | github.com/gazebosim/gz-sim | Simulation engine |
+| `gz-physics` | github.com/gazebosim/gz-physics | Physics engine |
+| `gz-rendering` | github.com/gazebosim/gz-rendering | Rendering engine |
+| `gz-msgs` | github.com/gazebosim/gz-msgs | Message protocols |
+| `gz-sdformat` | github.com/gazebosim/sdformat | SDF parser/library |
+| `gz-common` | github.com/gazebosim/gz-common | Common utilities |
+| `ros_gz` | github.com/gazebosim/ros_gz | ROS2-Gazebo bridge |
+| `ros_gz_sim` | github.com/gazebosim/ros_gz_sim | Simulation spawning |
+| `ros_gz_bridge` | github.com/gazebosim/ros_gz_bridge | Topic bridge |
+| `ign-msgs` | github.com/gazebosim/ign-msgs | Legacy messaging (Gazebo Classic) |
+| `ign-transport` | github.com/gazebosim/ign-transport | Legacy transport (Gazebo Classic) |
+
+---
+## Comparison with Existing Tools
+| Feature | This Project | URDF2SDFormat | `gz2urdf` / `urdf2sdf` | `ros_gz` | `gazebo_ros_pkgs` |
+|---|---|---|---|---|---|
+| URDF → SDF | Yes (bidirectional) | Partial (one-way) | Limited | No | No |
+| SDF → URDF | Yes (planned) | No | Partial | No | No |
+| Plugin conversion | Yes (templates) | No | No | No | No |
+| Multi-robot support | Yes (Python API) | No | No | Manual | No |
+| Validation suite | Automated pipeline | Manual | None | None | None |
+| Gazebo Classic support | Yes (ign-*) | Yes | Limited | No | Yes |
+| Gazebo Sim support | Yes (gz-*) | Partial | Partial | Yes | No |
+| Python bindings | Yes | No | No | No | No |
+| Docker support | Yes | No | No | No | No |
+| 10+ benchmark models | Yes | No | No | No | No |
+| Open source (Apache 2.0) | Yes | Yes | Yes | Yes | Yes |
+
+**Key differentiator:** This is the only tool that provides full bidirectional URDF↔SDF conversion with automated validation, plugin migration templates, multi-robot spawning, and Docker-based reproducibility.
+
+---
+## Post-GSoC Roadmap
+This project will evolve through three phases after GSoC concludes:
+
+### Phase 1: Community Adoption (Months 1-3 after GSoC)
+- Merge core converter into `ros_gz` as a contrib package
+- Publish PyPI package (`urdf2sdf-converter`)
+- Collect user feedback via GitHub Issues
+- Fix bugs and improve edge-case handling
+
+### Phase 2: Feature Expansion (Months 4-6 after GSoC)
+- Implement SDF → URDF bidirectional conversion
+- Add GUI converter (web-based drag-and-drop)
+- Create ROS 2 launch file generators
+- Integrate with MoveIt 2 planning
+- Support for `ros2_control` URDF plugins
+
+### Phase 3: Long-term Maintenance (Months 7+ after GSoC)
+- Become a Gazebo core dependency for URDF support
+- Regular releases (monthly during first year)
+- Community-contributed robot model conversions
+- Integration with robot manufacturer SDKs
+- Publication of a journal paper or ROSCon talk
+
+### Ongoing Commitments
+- Respond to issues within 48 hours
+- Review PRs weekly
+- Maintain documentation website
+- Attend Gazebo community meetings
+- Mentor new contributors
+
+---
+## Badges
+![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+![ROS 2](https://img.shields.io/badge/ROS2-Humble%20%7C%20Jazzy-blue.svg)
+![Gazebo](https://img.shields.io/badge/Gazebo-Sim%20%7C%20Classic-orange.svg)
+![Python](https://img.shields.io/badge/Python-3.8%2B-green.svg)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+![GitHub issues](https://img.shields.io/github/issues/strangerwhoisharborofdoom/gsoc-2026-proposal)
+![GitHub stars](https://img.shields.io/github/stars/strangerwhoisharborofdoom/gsoc-2026-proposal?style=social)
 
 
