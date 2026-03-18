@@ -114,6 +114,20 @@ I will engage maintainers from the Gazebo and ROS 2 projects during community bo
 | 3 | sdf-parser | TBD | TBD | Core SDF parsing library | Planned |
 | 4 | urdf-sdf-converter | TBD | TBD | URDF to SDF conversion CLI | Planned |
 
+
+## Placeholder Issues (Mapped to Timeline)
+
+These issues are tracked in this repo and reference the upstream Open Robotics repositories:
+
+| # | Issue | Milestone | Related Repo | Status |
+|---|-------|-----------|--------------|--------|
+| [#1](https://github.com/strangerwhoisharborofdoom/gsoc-2026-proposal/issues/1) | Set up project infrastructure and SDF parser foundation | Community Bonding / Week 1-2 | [sdf-parser](https://github.com/open-rmf/sdf-parser) | Open |
+| [#2](https://github.com/strangerwhoisharborofdoom/gsoc-2026-proposal/issues/2) | Implement URDF-to-SDF conversion logic | Phase 1 / Week 3-5 | [urdf-sdf-converter](https://github.com/open-rmf/urdf-sdf-converter) | Open |
+| [#3](https://github.com/strangerwhoisharborofdoom/gsoc-2026-proposal/issues/3) | Build Gazebo ROS 2 bridge simulator integration | Phase 2 / Week 6-9 | [gazebo-ros2-bridge-simulator](https://github.com/open-rmf/gazebo-ros2-bridge-simulator) | Open |
+| [#4](https://github.com/strangerwhoisharborofdoom/gsoc-2026-proposal/issues/4) | Add documentation and developer guide | Phase 3 / Week 10-12 | All repos | Open |
+| [#5](https://github.com/strangerwhoisharborofdoom/gsoc-2026-proposal/issues/5) | Final evaluation, polish, and submission preparation | Final Phase / Week 13 | All repos | Open |
+
+
 ---
 
 ## Project Repositories
