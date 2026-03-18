@@ -43,6 +43,32 @@ The project will integrate with the following OSRF repositories:
 
 ---
 
+## Exact Target Repositories
+
+This project will contribute code directly to these Open Robotics repositories:
+
+| Repository | URL | Purpose |
+|---|---|---|
+| gz-sim | [github.com/gazebosim/gz-sim](https://github.com/gazebosim/gz-sim) | Simulation engine integration, ECM improvements |
+| sdformat | [github.com/gazebosim/sdformat](https://github.com/gazebosim/sdformat) | SDF parsing and validation improvements |
+| ros_gz | [github.com/gazebosim/ros_gz](https://github.com/gazebosim/ros_gz) | ROS 2-Gazebo topic bridge enhancements |
+
+---
+
+## Comparison With Existing Tools
+
+Several tools already exist for URDF-to-SDF conversion, but they have limitations:
+
+| Tool | Limitations | How This Improves |
+|---|---|---|
+| `gz sdf -p` | SDF parsing only, no URDF conversion | Full bidirectional URDF ↔ SDF |
+| `sdformat` tools | Limited URDF support, no CLI | Dedicated `urdf2sdf` CLI with options |
+| Gazebo classic converters | Deprecated, ROS 1 focused | ROS 2 native, Humble+ compatible |
+
+This project provides a modern, actively maintained conversion toolchain specifically for the ROS 2 + Gazebo Harmonic ecosystem.
+
+
+
 ## Backward Compatibility Strategy
 
 ROS2 ecosystems change frequently. This project will support:
@@ -55,6 +81,74 @@ ROS2 ecosystems change frequently. This project will support:
 | Gazebo Garden | 7.x |
 
 ---
+
+## Implementation Approach
+
+The conversion process follows a 5-stage pipeline:
+
+1. **Parse URDF** — Use Python's `lxml` XML parser to read the URDF file and extract elements (links, joints, materials, sensors)
+2. **Build Intermediate Representation** — Construct an in-memory `RobotModel` data structure with normalized data types
+3. **Map to SDF Schema** — Apply element-wise mapping rules (e.g., URDF `<link>` → SDF `<link>`, `<transmission>` → `<plugin>`)
+4. **Generate SDF** — Serialize the mapped data to valid SDF 1.8 XML output
+5. **Validate Output** — Run `sdformat` library validation to ensure the generated SDF loads correctly in Gazebo
+
+```python
+# Simplified conversion pipeline
+urdf_xml = parse_urdf("robot.urdf")
+robot_model = build_robot_model(urdf_xml)
+sdf_model = map_to_sdf(robot_model)
+sdf_xml = generate_sdf(sdf_model)
+validate_sdf(sdf_xml)  # using sdformat library
+```
+
+---
+
+## Data Structures
+
+Core classes used in the converter:
+
+```python
+class RobotModel:
+    links: list[Link]
+    joints: list[Joint]
+    sensors: list[Sensor]
+    materials: dict[str, Material]
+    name: str
+
+class Link:
+    name: str
+    visual: Visual
+    collision: Collision
+    inertial: Inertial
+    origin: Pose
+
+class Joint:
+    name: str
+    type: str  # revolute, prismatic, continuous, fixed
+    parent: str
+    child: str
+    axis: Vector3
+    limit: JointLimit
+    dynamics: Dynamics
+```
+
+---
+
+## Architecture Diagram
+
+```mermaid
+graph LR
+    A[URDF File] --> B[XML Parser]
+    B --> C[RobotModel IR]
+    C --> D[SDF Mapper]
+    D --> E[SDF Generator]
+    E --> F[Validation]
+    F --> G[Gazebo Simulation]
+```
+
+**Flow:** URDF file is parsed into an intermediate representation (RobotModel), which is then mapped to SDF equivalents, serialized to XML, validated with sdformat, and finally tested in Gazebo simulation.
+
+
 
 ---
 
@@ -75,6 +169,87 @@ ROS2 ecosystems change frequently. This project will support:
 
 
 ---
+
+## CLI Design
+
+The `urdf2sdf` CLI provides both simple and advanced modes:
+
+```bash
+# Basic conversion
+urdf2sdf robot.urdf -o robot.sdf
+
+# With validation
+urdf2sdf robot.urdf -o robot.sdf --validate
+
+# Verbose mode for debugging
+urdf2sdf robot.urdf -o robot.sdf --verbose
+
+# Strict mode (fail on any warning)
+urdf2sdf robot.urdf -o robot.sdf --strict
+
+# Preview in Gazebo
+urdf2sdf robot.urdf --visualize
+
+# Show help
+urdf2sdf --help
+```
+
+**Options:**
+
+| Flag | Description |
+|---|---|
+| `-o, --output` | Output SDF file path |
+| `--validate` | Validate output with sdformat |
+| `--verbose` | Print detailed parsing steps |
+| `--debug` | Full debug output with intermediate representations |
+| `--strict` | Treat warnings as errors |
+| `--visualize` | Launch Gazebo preview after conversion |
+| `--quiet` | Only show errors |
+
+---
+
+## Example CLI Output
+
+```bash
+$ urdf2sdf turtlebot3.urdf -o turtlebot3.sdf --validate
+
+Parsing URDF: turtlebot3.urdf
+  Found 13 links
+  Found 12 joints
+  Found 2 sensors
+
+Converting to SDF...
+  Converted 13 links
+  Converted 12 joints
+  Converted 2 sensors
+
+Validation: PASSED
+Output: turtlebot3.sdf (4.2 KB)
+Time: 0.23 seconds
+```
+
+---
+
+## Real Test Cases
+
+The project includes a suite of real-world robot models for testing:
+
+```
+examples/
+  turtlebot3.urdf          → turtlebot3.sdf (small mobile robot)
+  fetch.urdf               → fetch.sdf (mobile manipulator)
+  pr2.urdf                 → pr2.sdf (dual-arm research robot)
+  ur5.urdf                 → ur5.sdf (industrial arm)
+  large_robot.urdf         → large_robot.sdf (complex multi-body system)
+```
+
+Each test verifies:
+- Correct number of links and joints
+- Proper joint axis orientation
+- Visual and collision geometry preservation
+- Successful loading in Gazebo headless mode
+
+
 ## Real Code Examples
 
 ### Python API Example
@@ -432,3 +607,136 @@ This work contributes to **robotics model format interoperability** - a recogniz
 - Academic research in format conversion accuracy and completeness
 
 ---
+
+## Performance Plan
+
+The converter is benchmarked across robot model sizes:
+
+| Model Size | Links | Joints | Target Time | Memory |
+|---|---|---|---|---|
+| Small (TurtleBot3) | ~13 | ~12 | < 100ms | < 20 MB |
+| Medium (Fetch) | ~40 | ~38 | < 250ms | < 50 MB |
+| Large (PR2) | ~100+ | ~90+ | < 500ms | < 100 MB |
+| Very Large | 200+ | 180+ | < 1000ms | < 150 MB |
+
+---
+
+## Error Handling Plan
+
+The converter handles errors gracefully at each stage:
+
+**Error Types:**
+
+| Category | Examples | Action |
+|---|---|---|
+| **Syntax errors** | Malformed XML, missing tags | Abort with clear message |
+| **Unsupported features** | Unknown joint types, custom elements | Warn, skip, or attempt best-effort conversion |
+| **Invalid structures** | Circular references, missing parents | Log warning, attempt repair or skip |
+| **Validation failures** | Invalid SDF schema | Report specific validation errors |
+
+The CLI returns appropriate exit codes:
+- `0` — Success
+- `1` — Conversion completed with warnings
+- `2` — Fatal error, conversion failed
+
+---
+
+## Validation Pipeline
+
+Every converted model goes through automated validation:
+
+```
+URDF File
+    ↓
+Convert (urdf2sdf)
+    ↓
+SDF Output
+    ↓
+Validate (sdformat library)
+    ↓
+Spawn in Gazebo (headless)
+    ↓
+Verify: links, joints, collision
+    ↓
+Report: PASS/FAIL with details
+```
+
+The CI pipeline runs this validation on every PR to ensure no regressions.
+
+---
+
+## Security Considerations
+
+The converter implements security best practices:
+
+- **Prevent XML entity attacks** — Disable external entity resolution in XML parser
+- **Limit file size** — Reject URDF files larger than 50 MB
+- **Validate schema** — Ensure input URDF conforms to expected structure before processing
+- **Sandboxed execution** — Run conversion in isolated subprocess for safety
+- **No arbitrary code execution** — Parser reads only declared elements, no eval/plugin loading
+
+---
+
+## Contribution Strategy
+
+Development follows an issue-driven workflow:
+
+- **Small, focused PRs** — Each PR addresses one feature or bug
+- **Weekly progress updates** — Status shared via GitHub issues
+- **Code review** — All PRs require at least one review
+- **Documentation first** — Docs updated alongside code changes
+- **Test coverage** — New features include tests before merge
+
+---
+
+## Development Roadmap
+
+```
+Phase 1 — Core parsing engine      → [Issue #1](link)
+Phase 2 — Conversion engine        → [Issue #2](link)
+Phase 3 — Gazebo integration       → [Issue #3](link)
+Phase 4 — Testing and benchmarking → [Issue #4](link)
+Phase 5 — Documentation and tutorials → [Issue #5](link)
+```
+
+Each phase maps to tracked GitHub issues with clear acceptance criteria.
+
+---
+
+## Evaluation Plan
+
+**Midterm (Week 6):**
+- [ ] Parser implemented and passing unit tests
+- [ ] 2+ PRs submitted to OSRF repositories
+- [ ] Working `urdf2sdf` CLI with basic conversion
+- [ ] Documentation draft published
+
+**Final (Week 12):**
+- [ ] Converter stable for TurtleBot3, Fetch, PR2 models
+- [ ] Full documentation published via GitHub Pages
+- [ ] 4+ PRs merged or in review at OSRF
+- [ ] Comprehensive test suite with CI integration
+- [ ] Final presentation and demo video
+
+---
+
+## Future Contributions
+
+After GSoC, I plan to continue contributing:
+
+- **GUI converter** — Web-based URDF/SDF visual converter
+- **Plugin conversion** — Automatic gazebo plugin porting
+- **Multi-robot support** — Spawn management and synchronization
+- **Format extensions** — Support for additional URDF/SDF features
+- **Performance optimization** — Parallel parsing for large models
+- **Community tutorials** — Blog posts and video guides
+
+I am committed to becoming a long-term contributor to the Gazebo and ROS 2 ecosystems.
+
+---
+
+## Elevator Pitch
+
+Robotics simulations depend heavily on model format compatibility between URDF (used by ROS) and SDF (used by Gazebo). However, these formats are often incompatible, causing friction in simulation workflows. This project builds a robust, well-tested conversion toolkit that enables seamless ROS 2 to Gazebo interoperability — helping developers, researchers, and companies deploy simulations faster with confidence.
+
+
