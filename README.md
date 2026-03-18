@@ -22,6 +22,40 @@
 
 **Why Open Robotics / OSRF:** This project directly improves Gazebo and ROS 2 interoperability —
 
+**Project Size:** 350 hours (medium)
+
+---
+
+## Integration with Open Robotics Projects
+
+The project will integrate with the following OSRF repositories:
+
+| Repository | Purpose |
+|---|---|
+| gz-sim | Simulation core integration and ECM improvements |
+| sdformat | SDF parsing and validation |
+| ros_gz_bridge | ROS2 ↔ Gazebo topic bridge |
+
+**Initial PR targets:**
+1. Documentation improvements for ECM (Entity Component Manager) components in gz-sim
+2. Example world demonstrating URDF → SDF conversion
+3. Bridge configuration templates for ros_gz_bridge
+
+---
+
+## Backward Compatibility Strategy
+
+ROS2 ecosystems change frequently. This project will support:
+
+| Target | Minimum Version |
+|---|---|
+| ROS2 Humble | 24.04 LTS |
+| ROS2 Rolling | Latest |
+| Gazebo Harmonic | 8.x |
+| Gazebo Garden | 7.x |
+
+---
+
 ---
 
 ## MVP (Minimum Viable Product)
@@ -31,11 +65,180 @@
 - **One PR** implementing integration code to an OSRF repo (placeholder).
 - **Documentation:** 2 tutorials (install + conversion example).
 
+
 ## Stretch Goals
 
 - Bidirectional conversion (`sdf2urdf`) with physics property preservation.
 - Multi-robot sync in the Gazebo-ROS2 bridge.
 - 5+ tutorials and CI integration tests across repositories.
+
+
+
+---
+## Real Code Examples
+
+### Python API Example
+
+```python
+from sdf_parser import parse_sdf
+
+model = parse_sdf("robot.sdf")
+print(model.links)
+print(model.joints)
+```
+
+### CLI Example
+
+```bash
+urdf2sdf robot.urdf -o robot.sdf
+```
+
+---
+
+## Schema Mapping: URDF ↔ SDF
+
+URDF to SDF conversion maps elements as follows:
+
+| URDF Element | SDF Equivalent |
+|---|---|
+| `link` | `link` |
+| `joint` | `joint` |
+| `transmission` | `plugin` (gazebo_ros_control) |
+| `gazebo` tag | `model/plugin` |
+| `inertial` | `inertial` |
+| `collision` | `collision` |
+| `visual` | `visual` |
+
+**Unsupported/Partially Supported:** URDF `material` color names (requires texture lookup), certain joint types not in SDF.
+
+---
+
+## Example CLI Output
+
+```text
+$ urdf2sdf robot.urdf
+
+✔ Parsed URDF (3 links, 2 joints)
+✔ Converted links
+✔ Converted joints
+✔ Generated SDF
+
+Output: robot.sdf
+```
+
+---
+
+## Logging System
+
+The CLI supports multiple verbosity levels:
+
+- `--verbose` - Print detailed parsing steps
+- `--debug` - Full debug output including intermediate representations
+- `--quiet` - Only show errors and warnings
+
+Example: `urdf2sdf robot.urdf -o robot.sdf --verbose`
+
+---
+
+## Visualization Support
+
+Preview converted models before finalizing:
+
+```bash
+urdf2sdf robot.urdf --visualize
+```
+
+Opens a Gazebo preview with the converted model loaded.
+
+---
+
+## Memory Usage Plan
+
+The parser is designed for efficiency:
+
+- Memory footprint < 100MB for large robot models
+- Streaming parsing for very large files
+- Efficient data structures (O(1) link/joint lookups)
+
+---
+
+## Plugin Conversion Strategy
+
+Gazebo plugins are handled as follows:
+
+| URDF Plugin | SDF/ROS Bridge Equivalent |
+|---|---|
+| `gazebo_ros_control` | `ros_gz_bridge` + SDF `<plugin>` |
+| Custom plugins | Ported to SDF plugin format |
+
+Custom plugin detection and conversion templates will be provided.
+
+---
+
+## Multi-Robot Simulation Support
+
+The tool supports spawning multiple robots:
+
+```python
+from sdf_parser import parse_sdf, create_world
+
+world = create_world()
+world.spawn(parse_sdf("robot1.sdf"))
+world.spawn(parse_sdf("robot2.sdf"))
+world.save("multi_robot.sdf")
+```
+
+---
+## Simulation Test Pipeline
+
+The project will validate conversion through an automated pipeline:
+
+```
+URDF file → convert → SDF → Gazebo → spawn robot → verify joints → report
+```
+
+The `test_simulation.sh` script will:
+- Parse URDF and convert to SDF
+- Load the SDF in Gazebo headless mode
+- Verify joint positions and link connections
+- Report conversion accuracy
+
+---
+
+## Real Robot Model Validation
+
+The tool will be tested against well-known robot models:
+
+| Model | Source | Purpose |
+|---|---|---|
+| TurtleBot3 | Official ROS2 | Small mobile robot |
+| Fetch Robot | Fetch Robotics | Mobile manipulator |
+| PR2 | Willow Garage | Dual-arm manipulation |
+| UR5 arm | Universal Robots | Industrial arm |
+
+Each model will be tested for full conversion fidelity.
+
+---
+
+## Real Benchmark Plan
+
+**Benchmark dataset:** 10+ robot models of varying complexity
+
+- Measure conversion time (target: < 500ms for most models)
+- Measure SDF output correctness (joint/link counts match URDF)
+- Gazebo load time comparison
+
+---
+
+## Documentation Website
+
+The project will include a docs/ directory with:
+
+- `install.md` - Installation instructions
+- `converter.md` - CLI and API documentation
+- `examples.md` - Worked examples and tutorials
+
+Deployed via **GitHub Pages** for public access.
 
 ---
 
@@ -48,6 +251,7 @@
 docker build -t gz-sim-demo:latest .
 
 # run (starts a minimal demo and exits after showing topic output)
+
 docker run --rm --network host gz-sim-demo:latest /bin/bash -lc "source /opt/ros/humble/setup.bash && echo 'ROS 2 Humble ready' && ros2 topic list"
 ```
 
@@ -156,3 +360,75 @@ See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 ---
 
 *Full proposal details available in the [proposal document](PROPOSAL.md) and the [100 changes recommendations](100_changes_recommendations.md).* core components maintained by Open Robotics. Delivering robust conversion tools and bridge improvements reduces friction for the Gazebo + ROS 2 developer community and aligns with OSRF's mission.
+
+
+## Maintainability Plan
+
+The project will follow these long-term maintenance practices:
+
+- **Modular architecture** - Separation of parsing, conversion, and CLI layers
+- **Clear API boundaries** - Stable public interfaces, internal flexibility
+- **Type hints** - Full Python type annotations for maintainability
+- **Extensive documentation** - Docstrings, README, and hosted docs
+- **Backwards compatibility** - Semantic versioning with clear deprecation paths
+
+---
+
+## Code Quality Tools
+
+The development workflow will use:
+
+- `black` - Code formatting
+- `ruff` - Linting
+- `mypy` - Static type checking
+- `pre-commit` - Git hooks
+
+```bash
+pre-commit install
+```
+
+---
+
+## Release Strategy
+
+The project will use **Semantic Versioning**:
+
+| Version | Milestone |
+|---|---|
+| 0.1.0 | MVP - Basic URDF to SDF conversion |
+| 0.5.0 | Stable converter with plugin support |
+| 1.0.0 | Production release with full test coverage |
+
+---
+
+## Community Support Plan
+
+Users can seek help through:
+
+- **GitHub Issues** - Bug reports and feature requests
+- **ROS Discourse** - General questions and discussions
+- **Gazebo community forum** - Simulation-specific issues
+
+---
+
+## Code Ownership
+
+A `CODEOWNERS` file will define:
+
+```
+/parser @strangerwhoisharborofdoom
+/docs @strangerwhoisharborofdoom
+/tests @strangerwhoisharborofdoom
+```
+
+---
+
+## Research Contributions
+
+This work contributes to **robotics model format interoperability** - a recognized challenge in the ROS community. By providing reliable URDF to SDF conversion with comprehensive testing, the project enables:
+
+- Faster robot model integration across simulation tools
+- Reduced friction in ROS 2 + Gazebo workflows
+- Academic research in format conversion accuracy and completeness
+
+---
