@@ -1,47 +1,41 @@
 name: CI
-
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install mdformat
-
+          pip install pytest
       - name: Check README formatting
         run: |
           mdformat README.md --check --diff || true
-
       - name: Validate README links
         run: |
           echo "README.md exists and has content"
           test -s README.md
-
       - name: Verify LICENSE
         run: |
           test -f LICENSE
           grep -q "Apache License" LICENSE
-
       - name: Verify Dockerfile
         run: |
           test -f Dockerfile
           grep -q "FROM ros:humble" Dockerfile
-
       - name: Verify demo script
         run: |
           test -f run_demo.sh
           head -1 run_demo.sh | grep -q "#!/bin/bash"
+      - name: Run unit tests
+        run: pytest tests/
